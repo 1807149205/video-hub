@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import {ref} from 'vue'
 
+const msg = ref('Hello world！')
 </script>
 
 <template>
-<div>Hello world</div>
+<div>{{ msg }}</div>
 </template>
 
 <style scoped>
