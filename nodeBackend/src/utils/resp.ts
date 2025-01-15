@@ -21,7 +21,7 @@ class Resp<T> {
     }
 
     static fail(msg?: string) {
-        return new Resp(null, msg);
+        return new Resp(null, msg, "400");
     }
 
 }
