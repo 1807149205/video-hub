@@ -4,7 +4,7 @@ declare namespace NodeJS {
       MYSQL_PASSWORD: string;
       MYSQL_DATABASE: string;
       MYSQL_HOST: string;
-      MYSQL_PORT: number;
+      MYSQL_PORT: string;
     }
   }
   
