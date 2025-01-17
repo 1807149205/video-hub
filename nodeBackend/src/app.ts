@@ -1,29 +1,38 @@
 import express from 'express';
-import userRouters from './routes/userRoutes';
-import envRouters from './routes/envRoutes';
 import cors from 'cors';
+import userRouter from './routes/userRoutes'
+import envRouter from './routes/envRoutes'
 
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 
-// 配置 CORS
-app.use(cors())
-
-// 确保 OPTIONS 请求正确处理（针对复杂请求）
-app.options('*', cors());
-
-// 中间件解析 JSON 请求体
+// 解析 JSON 请求体
 app.use(express.json());
 
-// 路由配置
-app.use('/user', userRouters);
-app.use('/env', envRouters);
+// 配置 CORS
+app.use(cors({
+  optionsSuccessStatus: 200
+}));
 
-// 全局错误处理中间件，确保返回正确响应
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Internal Server Error', error: err.message });
+// 手动处理 OPTIONS 请求（如果需要）
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(204);
 });
+
+app.all('/*', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,HEAD,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'content-Type,x-requested-with');
+  next();
+});
+
+// 路由配置
+app.use('/user', userRouter);
+app.use('/env', envRouter);
 
 // 启动服务器
 app.listen(PORT, () => {

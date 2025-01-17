@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 import router from './router';
+import axios from 'axios';
 
 const tabbarActive = ref('home');
 const tabbarChangeHandle = (index: string) => {
     router.push(`/${index}`);
 }
+
+onMounted(() => {
+    const url = 'https://glowing-palm-tree-wxppvrqjgg62565q-8080.app.github.dev/example'
+    console.log('url', url)
+    axios.get(url)
+})
+
 </script>
 
 <template>
