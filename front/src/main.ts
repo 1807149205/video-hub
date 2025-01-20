@@ -3,7 +3,9 @@ import 'vant/lib/index.css';
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { Tabbar, TabbarItem, Field, CellGroup, Button,NavBar,Notify,Cell,Dialog,ActionSheet   } from 'vant';
+import { Tabbar, TabbarItem, Field, CellGroup,
+    Button,NavBar,Notify,Cell,Dialog,
+    ActionSheet,Image as VanImage,Uploader    } from 'vant';
 
 import App from './App.vue'
 import router from './router'
@@ -23,5 +25,7 @@ app.use(Cell);
 app.use(CellGroup);
 app.use(Dialog);
 app.use(ActionSheet);
+app.use(VanImage)
+app.use(Uploader)
 
 app.mount('#app')

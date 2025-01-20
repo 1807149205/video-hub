@@ -8,6 +8,10 @@ import { onMounted, ref } from 'vue';
 const userStore = useUserStore();
 const baseUrl = ref('');
 const changeBaseUrlActionSheetShow = ref(false);
+const user = ref({
+  id: '',
+  username: ''
+});
 
 const setBaseUrlHandle = () => {
     HttpUtil.setBaseUrl(baseUrl.value);
@@ -15,11 +19,26 @@ const setBaseUrlHandle = () => {
     showToast({
         message: '设置成功！'
     })
+    window.localStorage.setItem('baseUrl', baseUrl.value);
+}
+
+const loadUserInfo = async () => {
+  const resp = await HttpUtil.get('/user/getCurrentUser');
+  if (resp.code === '200') {
+    user.value = resp.data;
+  } else {
+    userStore.isLogin = false;
+  }
+}
+
+const logout = () => {
+  localStorage.removeItem('token');
+  userStore.isLogin = false;
 }
 
 onMounted(async () => {
     baseUrl.value = await HttpUtil.getBaseUrl();
-    await HttpUtil.get('/user/getAll');
+    await loadUserInfo();
 })
 
 </script>
@@ -37,7 +56,20 @@ onMounted(async () => {
 <div style="height: 100px; padding: 2rem;">
     <div style="border-radius: 1rem; border: #e3e3e3 solid 1px;height: 100%;">
         <template v-if="userStore.isLogin">
-
+          <div style="display: flex;padding-left: 1rem">
+            <div>
+              <van-image
+                  round
+                  width="3rem"
+                  height="3rem"
+                  fit="cover"
+                  src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
+              />
+            </div>
+            <div>
+              <span>{{ user.username }}</span>
+            </div>
+          </div>
         </template>
         <template v-else>
             <div @click="router.push('/login')" style="height: 100%;">
@@ -50,8 +82,9 @@ onMounted(async () => {
 <div>
 
     <van-cell-group inset>
-        <van-cell title="单元格" value="内容" />
+        <van-cell v-if="userStore.isLogin" title="上传视频" value="" is-link @click="router.push('/videoUpload')" />
         <van-cell title="设置服务器" is-link @click="changeBaseUrlActionSheetShow = true"/>
+        <van-cell v-if="userStore.isLogin" title="登出" is-link @click="logout"/>
     </van-cell-group>
 </div>
 </template>

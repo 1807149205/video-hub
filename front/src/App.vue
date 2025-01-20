@@ -2,16 +2,37 @@
 import {ref, onMounted} from 'vue'
 import router from './router';
 import axios from 'axios';
+import HttpUtil from './utils/HttpUtil';
+import {useUserStore} from "@/stores/userStore.ts";
+import httpUtil from "./utils/HttpUtil";
+
+const userStore = useUserStore();
 
 const tabbarActive = ref('home');
 const tabbarChangeHandle = (index: string) => {
     router.push(`/${index}`);
 }
 
-onMounted(() => {
-    const url = 'https://glowing-palm-tree-wxppvrqjgg62565q-8080.app.github.dev/example'
-    console.log('url', url)
-    axios.get(url)
+const initUserToken = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    userStore.isLogin = false;
+  } else {
+    await httpUtil.addToken(token);
+    const resp = await httpUtil.get('/user/getCurrentUser');
+    if (resp.code !== '200') {
+      userStore.isLogin = false;
+    } else {
+      userStore.user = resp.data;
+      userStore.isLogin = true;
+    }
+  }
+}
+
+onMounted(async () => {
+    const baseUrl = window.localStorage.getItem('baseUrl');
+    HttpUtil.setBaseUrl(baseUrl || '');
+    await initUserToken();
 })
 
 </script>

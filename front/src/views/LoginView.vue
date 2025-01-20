@@ -3,10 +3,14 @@ import router from '@/router';
 import { reactive } from 'vue'
 import { showNotify } from 'vant';
 import HttpUtil from '@/utils/HttpUtil';
+import { useUserStore } from '@/stores/userStore';
+import httpUtil from "@/utils/HttpUtil";
+
+const userStore = useUserStore();
 
 const form = reactive({
-    username: '',
-    password: ''
+    username: 'weizhilong',
+    password: 'wzlwzl200114'
 })
 
 const login = async () => {
@@ -18,8 +22,21 @@ const login = async () => {
     return ;
   }
   const resp = await HttpUtil.post('/user/login', form);
-  console.log(resp);
-  
+  if (resp.code === '200') {
+    showNotify({
+      message: '登录成功',
+      type: 'success'
+    })
+    userStore.isLogin = true;
+    await httpUtil.addToken(resp.data);
+    await router.push('/');
+    localStorage.setItem('token', resp.data);
+  } else {
+    showNotify({
+      message: resp.msg,
+      type: 'danger'
+    })
+  }
 }
 
 </script>

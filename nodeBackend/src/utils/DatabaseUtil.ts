@@ -1,5 +1,10 @@
 import db from './db';
 
+export interface UpdateResultOption {
+  affectedRows: number;
+  insertId: string;
+}
+
 class DatabaseUtil {
   /**
    * 执行 SELECT 查询
@@ -23,10 +28,10 @@ class DatabaseUtil {
    * @param params - SQL 参数（可选）
    * @returns 受影响的行数
    */
-  static async update(sql: string, params?: any[]): Promise<number> {
+  static async update(sql: string, params?: any[]): Promise<UpdateResultOption> {
     try {
       const [result]: any = await db.query(sql, params);
-      return result.affectedRows;
+      return result;
     } catch (error) {
       console.error('Error executing UPDATE query:', error);
       throw error;
