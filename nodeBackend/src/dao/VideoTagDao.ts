@@ -52,8 +52,6 @@ class VideoTagDao {
                 tagMenuMap.set(tag.pId, tags);
             }
         }
-        console.log(tagMenuMap, 'tagMenuMap');
-
         let result: VideoTagTree[] = [];
         for (const tag of allTag) {
             if (tag.pId === -1) {
@@ -67,8 +65,16 @@ class VideoTagDao {
                 resultTag.children.push(tag);
             }
         }
-        console.log(result,'result');
         return result;
+    }
+    async getByVideoId(videoId: number): Promise<VideoTagType[]> {
+        const sql = `
+            SELECT * FROM video_tag_relation 
+                LEFT JOIN video_tag ON video_tag_relation.tag_id = video_tag.id
+            WHERE video_tag_relation.video_id = ?
+        `;
+        const res: VideoTagRowType[] = await DatabaseUtil.select(sql, [videoId]);
+        return res.map(row => this.rowTypeToDTO(row));
     }
 }
 

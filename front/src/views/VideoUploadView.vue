@@ -48,6 +48,7 @@ const uploadVideoHandle = async () => {
     showNotify({
       message: '添加成功！'
     })
+    router.push('/');
   }
 }
 

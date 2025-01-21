@@ -22,7 +22,7 @@ export interface VideoRawType {
 
 class VideoDao {
 
-    convertType(video: VideoRawType): VideoType {
+    private convertType(video: VideoRawType): VideoType {
         return {
             id: video.id,
             videoName: video.video_name,
@@ -41,6 +41,13 @@ class VideoDao {
         return await DatabaseUtil.update(sql, [
             video.videoName, video.videoDesc, video.videoUrl, userId, new Date()
         ])
+    }
+    async videoHomePage(page: number, size: number) {
+        const sql = `
+            SELECT * FROM video ORDER BY create_date DESC LIMIT ?,?
+        `;
+        const videos = await DatabaseUtil.select(sql, [(page - 1) * size, size]);
+        return videos.map(video => this.convertType(video));
     }
 }
 
