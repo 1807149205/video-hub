@@ -19,12 +19,23 @@ const afterRead = async (file) => {
   const formData = new FormData();
   formData.append('file', file.file);
 
-  const resp = await httpUtil.upload('/file/upload', formData);
-  console.log(resp,'resp');
-  if (resp.code === '200') {
-    videoSaveForm.videoUrl = resp.data;
-    videoUploaded.value = true;
+  try {
+    const resp = await httpUtil.upload('/file/upload', formData);
+    console.log(resp,'resp');
+    if (resp.code === '200') {
+      videoSaveForm.videoUrl = resp.data;
+      videoUploaded.value = true;
+    } else {
+      showNotify({
+        message: resp.msg
+      })
+    }
+  } catch (e) {
+    showNotify({
+      message: '上传失败'
+    })
   }
+
 };
 
 const loadTags = async () => {

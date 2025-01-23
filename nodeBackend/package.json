@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server-dev": "nodemon",
     "build": "tsc",
-    "prod-start": "node dist/app.js"
+    "server-prod": "node dist/app.js"
   },
   "author": "",
   "license": "ISC",
