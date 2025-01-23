@@ -20,7 +20,9 @@ const afterRead = async (file) => {
   formData.append('file', file.file);
 
   try {
-    const resp = await httpUtil.upload('/file/upload', formData);
+    const resp = await httpUtil.post('/file/upload', formData, {
+      'Content-Type': 'multipart/form-data'
+    });
     console.log(resp,'resp');
     if (resp.code === '200') {
       videoSaveForm.videoUrl = resp.data;

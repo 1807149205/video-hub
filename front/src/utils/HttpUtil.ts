@@ -25,8 +25,15 @@ class HttpUtil {
         return commonResp;
     }
 
-    static async post(url: string, data?: any) {
-        const resp = await axios.post(`${this.baseUrl}${url}`, data, this.config);
+    static async post(url: string, data?: any, headers?: any) {
+        let resp;
+        if (headers) {
+            resp = await axios.post(`${this.baseUrl}${url}`, data, {
+                headers
+            })
+        } else {
+            resp = await axios.post(`${this.baseUrl}${url}`, data, this.config);
+        }
         const commonResp: CommonResponse<any> = resp.data;
         return commonResp;
     }
