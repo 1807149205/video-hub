@@ -4,6 +4,7 @@ import Resp from '../utils/resp';
 import * as fs from "node:fs";
 import multer from 'multer';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -25,7 +26,9 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
             res.send(Resp.fail('Failed to read file'));
             return;
         }
-        fs.writeFile(`${uploadPath}\\${file.filename}.${file.originalname.split(".")[1]}`, data, (err) => {
+        const filePath = path.join(`${uploadPath}`,`${file.filename}.${file.originalname.split(".")[1]}`);
+        console.log('上传文件的地址:',filePath);
+        fs.writeFile(filePath, data, (err) => {
             if (err) {
                 res.send(Resp.fail('Failed to write file'));
             } else {

@@ -50,6 +50,7 @@ const resp_1 = __importDefault(require("../utils/resp"));
 const fs = __importStar(require("node:fs"));
 const multer_1 = __importDefault(require("multer"));
 const dotenv = __importStar(require("dotenv"));
+const path = __importStar(require("path"));
 dotenv.config();
 const uploadPath = process.env.VIDEO_SAVE_PATH;
 const videoUrlPrefix = process.env.VIDEO_URL_PREFIX;
@@ -67,7 +68,9 @@ router.post('/upload', upload.single('file'), (req, res) => __awaiter(void 0, vo
             res.send(resp_1.default.fail('Failed to read file'));
             return;
         }
-        fs.writeFile(`${uploadPath}\\${file.filename}.${file.originalname.split(".")[1]}`, data, (err) => {
+        const filePath = path.join(`${uploadPath}`, `${file.filename}.${file.originalname.split(".")[1]}`);
+        console.log('上传文件的地址:', filePath);
+        fs.writeFile(filePath, data, (err) => {
             if (err) {
                 res.send(resp_1.default.fail('Failed to write file'));
             }
