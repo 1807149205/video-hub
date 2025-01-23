@@ -42,7 +42,7 @@ class DatabaseUtil {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const [result] = yield db_1.default.query(sql, params);
-                return result.affectedRows;
+                return result;
             }
             catch (error) {
                 console.error('Error executing UPDATE query:', error);

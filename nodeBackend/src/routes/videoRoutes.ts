@@ -50,4 +50,15 @@ router.get('/homePage', async (req: Request, res: Response) => {
     res.send(Resp.ok(vos));
 })
 
+router.get('/getById', async (req: Request, res: Response) => {
+    const id = Number.parseInt(req.query.videoId as string);
+    const video = await videoDao.getById(id);
+    const tag = await videoTagDao.getByVideoId(video.id);
+    const tagNames = tag.map(t => t.tagName);
+    res.send(Resp.ok({
+        video,
+        tagNames
+    }));
+})
+
 export default router;

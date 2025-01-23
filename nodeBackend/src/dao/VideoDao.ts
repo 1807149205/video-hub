@@ -49,6 +49,13 @@ class VideoDao {
         const videos = await DatabaseUtil.select(sql, [(page - 1) * size, size]);
         return videos.map(video => this.convertType(video));
     }
+    async getById(videoId: number) {
+        const sql = `
+            SELECT * FROM video WHERE id = ?
+        `;
+        const video = await DatabaseUtil.select(sql, [videoId]);
+        return this.convertType(video[0]);
+    }
 }
 
 export default VideoDao;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, watch} from 'vue'
 import router from './router';
 import axios from 'axios';
 import HttpUtil from './utils/HttpUtil';
@@ -28,6 +28,16 @@ const initUserToken = async () => {
     }
   }
 }
+
+watch(() => router.currentRoute.value.path, async (path) => {
+    if (path === '/settings') {
+      tabbarActive.value = 'settings';
+    } else if (path === '/search') {
+      tabbarActive.value = 'search';
+    } else {
+      tabbarActive.value = 'home';
+    }
+})
 
 onMounted(async () => {
     const baseUrl = window.localStorage.getItem('baseUrl');

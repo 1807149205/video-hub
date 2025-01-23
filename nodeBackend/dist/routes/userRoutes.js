@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const resp_1 = __importDefault(require("../utils/resp"));
 const UserDao_1 = __importDefault(require("../dao/UserDao"));
+const TokenUtil_1 = __importDefault(require("../utils/TokenUtil"));
 const router = express_1.default.Router();
 const userDao = new UserDao_1.default();
 router.post(`/login`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -23,11 +24,26 @@ router.post(`/login`, (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.json(resp_1.default.fail("请输入用户名或密码"));
     }
     const user = yield userDao.getUserByUsernameAndPassword(username, password);
-    if (user) {
-        res.json(resp_1.default.ok(user));
+    if (user.length === 0) {
+        res.json(resp_1.default.fail("用户名或密码错误"));
+        return;
+    }
+    res.json(resp_1.default.ok(TokenUtil_1.default.getToken(user[0])));
+}));
+router.get('/getCurrentUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const token = req.headers['token'];
+    if (!token) {
+        res.json(resp_1.default.fail("请先登录"));
     }
     else {
-        res.json(resp_1.default.fail("用户名或密码错误"));
+        const user = TokenUtil_1.default.getUser(token);
+        if (user) {
+            user.password = '***';
+            res.json(resp_1.default.ok(user));
+        }
+        else {
+            res.json(resp_1.default.fail("请先登录"));
+        }
     }
 }));
 router.get(`/getAll`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

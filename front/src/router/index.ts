@@ -5,6 +5,7 @@ import SearchView from '@/views/SearchView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import VideoUploadView from "@/views/VideoUploadView.vue";
+import VideoDetailView from '@/views/VideoDetailView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,6 +37,10 @@ const router = createRouter({
     {
       path: '/videoUpload',
       component: VideoUploadView
+    },
+    {
+      path: '/videoDetail',
+      component: VideoDetailView
     }
   ],
 })
