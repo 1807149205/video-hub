@@ -8,7 +8,7 @@ import VideoUploadView from "@/views/VideoUploadView.vue";
 import VideoDetailView from '@/views/VideoDetailView.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory('/video-hub/'),
   routes: [
     {
       path: '/',

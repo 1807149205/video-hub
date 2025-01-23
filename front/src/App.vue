@@ -9,6 +9,7 @@ import httpUtil from "./utils/HttpUtil";
 const userStore = useUserStore();
 
 const tabbarActive = ref('home');
+const tabbarVis = ref(true);
 const tabbarChangeHandle = (index: string) => {
     router.push(`/${index}`);
 }
@@ -30,12 +31,15 @@ const initUserToken = async () => {
 }
 
 watch(() => router.currentRoute.value.path, async (path) => {
+  tabbarVis.value = true;
     if (path === '/settings') {
       tabbarActive.value = 'settings';
     } else if (path === '/search') {
       tabbarActive.value = 'search';
-    } else {
+    } else if (path === '/home') {
       tabbarActive.value = 'home';
+    } else {
+      tabbarVis.value = false;
     }
 })
 
@@ -49,7 +53,7 @@ onMounted(async () => {
 
 <template>
     <RouterView/>
-    <van-tabbar v-model="tabbarActive" @change="tabbarChangeHandle">
+    <van-tabbar v-if="tabbarVis" v-model="tabbarActive" @change="tabbarChangeHandle">
         <van-tabbar-item name="home" icon="home-o">主页</van-tabbar-item>
         <van-tabbar-item name="search" icon="search">搜索</van-tabbar-item>
         <van-tabbar-item name="settings" icon="setting-o">设置</van-tabbar-item>
