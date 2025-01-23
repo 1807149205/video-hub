@@ -35,8 +35,9 @@ class HttpUtil {
         const resp = await axios.post(`${this.baseUrl}${url}`, data, {
             headers: {
                 'token': this.config.headers['token'],
-                'Content-Type': 'multipart/form-data'
-            }
+                'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true
         });
         const commonResp: CommonResponse<any> = resp.data;
         return commonResp;
