@@ -46,7 +46,8 @@ const uploadVideoHandle = async () => {
   const resp = await httpUtil.post('/video/save', videoSaveForm);
   if (resp.code === '200') {
     showNotify({
-      message: '添加成功！'
+      message: '添加成功！',
+      type: 'success'
     })
     router.push('/');
   }

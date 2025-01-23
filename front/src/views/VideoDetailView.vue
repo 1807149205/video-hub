@@ -36,7 +36,10 @@ onMounted(async () => {
   @click-left="router.back()"
 />
 <div>
-    <video :src="videoInfo.video.videoUrl" controls style="width: 100%;"></video>
+    <video
+        :src="videoInfo.video.videoUrl"
+        controls
+        style="width: 100%;max-height: 15rem"></video>
 </div>
 <div class="cardContainer">
     <div class="cardContent">
