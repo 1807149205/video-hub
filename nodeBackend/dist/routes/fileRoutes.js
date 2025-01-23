@@ -55,7 +55,10 @@ dotenv.config();
 const uploadPath = process.env.VIDEO_SAVE_PATH;
 const videoUrlPrefix = process.env.VIDEO_URL_PREFIX;
 const router = express_1.default.Router();
-const upload = (0, multer_1.default)({ dest: 'uploads/' });
+const upload = (0, multer_1.default)({
+    dest: 'uploads/',
+    limits: { fileSize: 300 * 1024 * 1024 } //300MB
+});
 router.post('/upload', upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const file = req.file;
     console.log(file, 'upload');

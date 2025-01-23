@@ -12,7 +12,10 @@ const uploadPath = process.env.VIDEO_SAVE_PATH;
 const videoUrlPrefix = process.env.VIDEO_URL_PREFIX;
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({
+    dest: 'uploads/',
+    limits: { fileSize: 300 * 1024 * 1024 }//300MB
+});
 
 router.post('/upload', upload.single('file'), async (req: Request, res: Response) => {
     const file = req.file;
