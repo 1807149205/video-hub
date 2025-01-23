@@ -76,7 +76,7 @@ onMounted(async () => {
       <video controls width="100%" :src="videoSaveForm.videoUrl" />
     </template>
     <template v-else>
-      <van-uploader :after-read="afterRead" style="margin-top: 10px;margin-left: 1rem">
+      <van-uploader accept="video/*" :after-read="afterRead" style="margin-top: 10px;margin-left: 1rem">
         <van-button icon="plus" type="primary">上传文件</van-button>
       </van-uploader>
     </template>
@@ -103,7 +103,7 @@ onMounted(async () => {
   </div>
 
   <div>
-    <van-button :disabled="!videoSaveForm.videoDesc || !videoSaveForm.videoName || !videoSaveForm.videoUrl"
+    <van-button  :disabled="!videoSaveForm.videoDesc || !videoSaveForm.videoName || !videoSaveForm.videoUrl"
                 block type="primary"
                 @click="uploadVideoHandle">上传</van-button>
   </div>
