@@ -11,9 +11,11 @@ dotenv.config();
 const uploadPath = process.env.VIDEO_SAVE_PATH;
 const videoUrlPrefix = process.env.VIDEO_URL_PREFIX;
 
+const uploadDesc = 'uploads/';
+
 const router = express.Router();
 const upload = multer({
-    dest: 'uploads/',
+    dest: uploadDesc,
     limits: { fileSize: 300 * 1024 * 1024 }//300MB
 });
 
@@ -29,15 +31,33 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
             res.send(Resp.fail('Failed to read file'));
             return;
         }
-        const filePath = path.join(`${uploadPath}`,`${file.filename}.${file.originalname.split(".")[1]}`);
-        console.log('上传文件的地址:',filePath);
-        fs.writeFile(filePath, data, (err) => {
+        const filePath = path.join(`${uploadPath}`, `${file.filename}.${file.originalname.split(".")[1]}`);
+        const dir = path.dirname(filePath);
+
+        // 检查并创建目录
+        fs.mkdir(dir, { recursive: true }, (err) => {
             if (err) {
-                res.send(Resp.fail('Failed to write file'));
-            } else {
-                const videoUrl = `${videoUrlPrefix}/${file.filename}.${file.originalname.split(".")[1]}`;
-                res.send(Resp.ok(videoUrl));
+                res.send(Resp.fail('Failed to create directory'));
+                return;
             }
+
+            console.log('上传文件的地址:', filePath);
+            fs.writeFile(filePath, data, (err) => {
+                if (err) {
+                    res.send(Resp.fail('Failed to write file'));
+                } else {
+                    const videoUrl = `${videoUrlPrefix}/${file.filename}.${file.originalname.split(".")[1]}`;
+                    res.send(Resp.ok(videoUrl));
+                    // 删除临时文件
+                    fs.unlink(`${uploadDesc}${file.filename}`, (err) => {
+                        if (err) {
+                            console.error('Failed to delete temporary file', err);
+                        } else {
+                            console.log('Temporary file deleted');
+                        }
+                    });
+                }
+            });
         });
     });
 });

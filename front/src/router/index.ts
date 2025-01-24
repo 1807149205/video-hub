@@ -6,6 +6,7 @@ import SettingsView from '@/views/SettingsView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import VideoUploadView from "@/views/VideoUploadView.vue";
 import VideoDetailView from '@/views/VideoDetailView.vue'
+import MyUploadVideo from "@/views/MyUploadVideo.vue";
 
 const router = createRouter({
   history: createWebHistory('/video-hub/'),
@@ -41,6 +42,10 @@ const router = createRouter({
     {
       path: '/videoDetail',
       component: VideoDetailView
+    },
+    {
+      path: '/myUploadVideo',
+      component: MyUploadVideo
     }
   ],
 })

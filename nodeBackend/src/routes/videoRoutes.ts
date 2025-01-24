@@ -61,4 +61,10 @@ router.get('/getById', async (req: Request, res: Response) => {
     }));
 })
 
+router.get('/getCurrentUserVideo', async (req: Request, res: Response) => {
+    const user = tokenUtil.getUser(req.headers['token'] as string) as UserType;
+    const videos = await videoDao.getByUserId(user.id);
+    res.send(Resp.ok(videos));
+})
+
 export default router;

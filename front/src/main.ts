@@ -5,7 +5,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { Tabbar, TabbarItem, Field, CellGroup,
     Button,NavBar,Notify,Cell,Dialog,
-    ActionSheet,Image as VanImage,Uploader,Search,Tag      } from 'vant';
+    ActionSheet,Image as VanImage,Uploader,Search,Tag,Empty,Icon      } from 'vant';
 
 import App from './App.vue'
 import router from './router'
@@ -29,5 +29,7 @@ app.use(VanImage)
 app.use(Uploader)
 app.use(Search)
 app.use(Tag)
+app.use(Empty)
+app.use(Icon)
 
 app.mount('#app')
