@@ -54,7 +54,7 @@ onMounted(async () => {
 
 
 <div style="height: 100px; padding: 2rem;">
-    <div style="border-radius: 1rem; border: #e3e3e3 solid 1px;height: 100%;">
+    <div style="border-radius: 1rem; border: #e3e3e3 solid 1px;height: 100%;display: flex;flex-direction: column;justify-content: center;">
         <template v-if="userStore.isLogin">
           <div style="display: flex;padding-left: 1rem">
             <div>
@@ -66,8 +66,8 @@ onMounted(async () => {
                   src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
               />
             </div>
-            <div>
-              <span>{{ user.username }}</span>
+            <div style="margin-left: 1rem">
+              <span style="line-height: 3rem; font-size: 17px; color: rgb(100,100,100)">{{ user.username }}</span>
             </div>
           </div>
         </template>
@@ -88,6 +88,10 @@ onMounted(async () => {
         <van-cell v-if="userStore.isLogin" title="登出" is-link @click="logout" icon="down"/>
     </van-cell-group>
 </div>
+
+  <div style="margin-top: 2rem;">
+    <p style="text-align: center; color: rgb(150,150,150); font-size: 13px">power by video-center 2025</p>
+  </div>
 </template>
 
 <style scoped>

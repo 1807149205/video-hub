@@ -1,4 +1,5 @@
 import axios, { type AxiosRequestConfig } from "axios";
+import {showNotify} from "vant";
 
 interface CommonResponse<T> {
     data: T;
@@ -17,37 +18,41 @@ class HttpUtil {
     }
 
     static async get(url: string, params?: any) {
-        const resp = await axios.get(`${this.baseUrl}${url}`, {
-            params,
-            ...this.config
-        })
-        const commonResp: CommonResponse<any> = resp.data;
-        return commonResp;
+        try {
+            const resp = await axios.get(`${this.baseUrl}${url}`, {
+                params,
+                ...this.config
+            })
+            const commonResp: CommonResponse<any> = resp.data;
+            return commonResp;
+        } catch (e) {
+            showNotify({
+                message: '网络错误',
+                type: 'danger'
+            })
+            throw e;
+        }
     }
 
     static async post(url: string, data?: any, headers?: any) {
-        let resp;
-        if (headers) {
-            resp = await axios.post(`${this.baseUrl}${url}`, data, {
-                headers
+        try {
+            let resp;
+            if (headers) {
+                resp = await axios.post(`${this.baseUrl}${url}`, data, {
+                    headers
+                })
+            } else {
+                resp = await axios.post(`${this.baseUrl}${url}`, data, this.config);
+            }
+            const commonResp: CommonResponse<any> = resp.data;
+            return commonResp;
+        } catch (e) {
+            showNotify({
+                message: '网络错误',
+                type: 'danger'
             })
-        } else {
-            resp = await axios.post(`${this.baseUrl}${url}`, data, this.config);
+            throw e;
         }
-        const commonResp: CommonResponse<any> = resp.data;
-        return commonResp;
-    }
-
-    static async upload(url: string, data?: any) {
-        const resp = await axios.post(`${this.baseUrl}${url}`, data, {
-            headers: {
-                'token': this.config.headers['token'],
-                'Content-Type': 'multipart/form-data',
-            },
-            withCredentials: true
-        });
-        const commonResp: CommonResponse<any> = resp.data;
-        return commonResp;
     }
 
     static async setBaseUrl(url: string) {
