@@ -76,6 +76,22 @@ class VideoTagDao {
         const res: VideoTagRowType[] = await DatabaseUtil.select(sql, [videoId]);
         return res.map(row => this.rowTypeToDTO(row));
     }
+
+    async saveTag(tagName: string, pId: string, createUserId: number) {
+        const sql = `
+            INSERT INTO video_tag(tag_name, p_id, create_user_id, create_date)
+            VALUES (?,?,?,?)
+        `;
+        const countSql = `
+            SELECT COUNT(*) FROM video_tag WHERE tag_name = ? AND p_id = ?
+        `
+        const count = await DatabaseUtil.select(countSql, [tagName, pId]);
+        if (count[0]['COUNT(*)'] > 0) {
+            throw new Error("标签已存在");
+        } else {
+            await DatabaseUtil.update(sql, [tagName, pId, createUserId, new Date()]);
+        }
+    }
 }
 
 export default VideoTagDao;

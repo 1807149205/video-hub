@@ -74,5 +74,23 @@ class VideoTagDao {
             return res.map(row => this.rowTypeToDTO(row));
         });
     }
+    saveTag(tagName, pId, createUserId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const sql = `
+            INSERT INTO video_tag(tag_name, p_id, create_user_id, create_date)
+            VALUES (?,?,?,?)
+        `;
+            const countSql = `
+            SELECT COUNT(*) FROM video_tag WHERE tag_name = ? AND p_id = ?
+        `;
+            const count = yield DatabaseUtil_1.default.select(countSql, [tagName, pId]);
+            if (count[0]['COUNT(*)'] > 0) {
+                throw new Error("标签已存在");
+            }
+            else {
+                yield DatabaseUtil_1.default.update(sql, [tagName, pId, createUserId, new Date()]);
+            }
+        });
+    }
 }
 exports.default = VideoTagDao;
