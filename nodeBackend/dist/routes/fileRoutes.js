@@ -51,6 +51,7 @@ const fs = __importStar(require("node:fs"));
 const multer_1 = __importDefault(require("multer"));
 const dotenv = __importStar(require("dotenv"));
 const path = __importStar(require("path"));
+const minio_1 = require("minio");
 dotenv.config();
 const uploadPath = process.env.VIDEO_SAVE_PATH;
 const videoUrlPrefix = process.env.VIDEO_URL_PREFIX;
@@ -60,6 +61,14 @@ const upload = (0, multer_1.default)({
     dest: uploadDesc,
     limits: { fileSize: 300 * 1024 * 1024 } //300MB
 });
+const minioClient = new minio_1.Client({
+    endPoint: process.env.MINIO_ENDPOINT || 'http://127.0.0.1:9000',
+    port: parseInt(process.env.MINIO_PORT || '9000'),
+    useSSL: process.env.MINIO_USE_SSL === 'true',
+    accessKey: process.env.MINIO_ACCESS_KEY,
+    secretKey: process.env.MINIO_SECRET_KEY
+});
+const bucketName = process.env.MINIO_BUCKET_NAME || "";
 router.post('/upload', upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const file = req.file;
     console.log(file, 'upload');
@@ -75,31 +84,26 @@ router.post('/upload', upload.single('file'), (req, res) => __awaiter(void 0, vo
         const filePath = path.join(`${uploadPath}`, `${file.filename}.${file.originalname.split(".")[1]}`);
         const dir = path.dirname(filePath);
         // 检查并创建目录
-        fs.mkdir(dir, { recursive: true }, (err) => {
+        fs.mkdir(dir, { recursive: true }, (err) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {
                 res.send(resp_1.default.fail('Failed to create directory'));
                 return;
             }
             console.log('上传文件的地址:', filePath);
-            fs.writeFile(filePath, data, (err) => {
+            const minioResp = yield minioClient.fPutObject(bucketName, `${file.filename}.${file.originalname.split(".")[1]}`, file.path);
+            console.log('minioResp', minioResp);
+            const videoUrl = `${process.env.MINIO_URL_PREFIX}/${bucketName}/${file.filename}.${file.originalname.split(".")[1]}`;
+            // 删除临时文件
+            fs.unlink(`${uploadDesc}${file.filename}`, (err) => {
                 if (err) {
-                    res.send(resp_1.default.fail('Failed to write file'));
+                    console.error('Failed to delete temporary file', err);
                 }
                 else {
-                    const videoUrl = `${videoUrlPrefix}/${file.filename}.${file.originalname.split(".")[1]}`;
-                    res.send(resp_1.default.ok(videoUrl));
-                    // 删除临时文件
-                    fs.unlink(`${uploadDesc}${file.filename}`, (err) => {
-                        if (err) {
-                            console.error('Failed to delete temporary file', err);
-                        }
-                        else {
-                            console.log('Temporary file deleted');
-                        }
-                    });
+                    console.log('Temporary file deleted');
                 }
             });
-        });
+            res.send(resp_1.default.ok(videoUrl));
+        }));
     });
 }));
 exports.default = router;
