@@ -95,8 +95,4 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-@font-face {
-  font-family: 'upload-icon';
-  src: ;
-}
 </style>
