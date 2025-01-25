@@ -54,9 +54,10 @@ const path = __importStar(require("path"));
 dotenv.config();
 const uploadPath = process.env.VIDEO_SAVE_PATH;
 const videoUrlPrefix = process.env.VIDEO_URL_PREFIX;
+const uploadDesc = 'uploads/';
 const router = express_1.default.Router();
 const upload = (0, multer_1.default)({
-    dest: 'uploads/',
+    dest: uploadDesc,
     limits: { fileSize: 300 * 1024 * 1024 } //300MB
 });
 router.post('/upload', upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -72,15 +73,32 @@ router.post('/upload', upload.single('file'), (req, res) => __awaiter(void 0, vo
             return;
         }
         const filePath = path.join(`${uploadPath}`, `${file.filename}.${file.originalname.split(".")[1]}`);
-        console.log('上传文件的地址:', filePath);
-        fs.writeFile(filePath, data, (err) => {
+        const dir = path.dirname(filePath);
+        // 检查并创建目录
+        fs.mkdir(dir, { recursive: true }, (err) => {
             if (err) {
-                res.send(resp_1.default.fail('Failed to write file'));
+                res.send(resp_1.default.fail('Failed to create directory'));
+                return;
             }
-            else {
-                const videoUrl = `${videoUrlPrefix}/${file.filename}.${file.originalname.split(".")[1]}`;
-                res.send(resp_1.default.ok(videoUrl));
-            }
+            console.log('上传文件的地址:', filePath);
+            fs.writeFile(filePath, data, (err) => {
+                if (err) {
+                    res.send(resp_1.default.fail('Failed to write file'));
+                }
+                else {
+                    const videoUrl = `${videoUrlPrefix}/${file.filename}.${file.originalname.split(".")[1]}`;
+                    res.send(resp_1.default.ok(videoUrl));
+                    // 删除临时文件
+                    fs.unlink(`${uploadDesc}${file.filename}`, (err) => {
+                        if (err) {
+                            console.error('Failed to delete temporary file', err);
+                        }
+                        else {
+                            console.log('Temporary file deleted');
+                        }
+                    });
+                }
+            });
         });
     });
 }));

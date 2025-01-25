@@ -59,4 +59,9 @@ router.get('/getById', (req, res) => __awaiter(void 0, void 0, void 0, function*
         tagNames
     }));
 }));
+router.get('/getCurrentUserVideo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = TokenUtil_1.default.getUser(req.headers['token']);
+    const videos = yield videoDao.getByUserId(user.id);
+    res.send(resp_1.default.ok(videos));
+}));
 exports.default = router;

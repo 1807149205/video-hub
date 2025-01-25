@@ -54,5 +54,14 @@ class VideoDao {
             return this.convertType(video[0]);
         });
     }
+    getByUserId(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const sql = `
+            SELECT * FROM video WHERE create_user_id = ?
+        `;
+            const videos = yield DatabaseUtil_1.default.select(sql, [id]);
+            return videos.map(video => this.convertType(video));
+        });
+    }
 }
 exports.default = VideoDao;
