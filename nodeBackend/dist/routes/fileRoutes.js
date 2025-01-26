@@ -52,13 +52,15 @@ const multer_1 = __importDefault(require("multer"));
 const dotenv = __importStar(require("dotenv"));
 const path = __importStar(require("path"));
 const minio_1 = require("minio");
+const FileUploadUtils_1 = __importDefault(require("../utils/FileUploadUtils"));
+const FFmpegUtils_1 = __importDefault(require("../utils/FFmpegUtils"));
 dotenv.config();
 const uploadPath = process.env.VIDEO_SAVE_PATH;
 const videoUrlPrefix = process.env.VIDEO_URL_PREFIX;
 const uploadDesc = 'uploads/';
 const router = express_1.default.Router();
 const upload = (0, multer_1.default)({
-    dest: uploadDesc,
+    dest: uploadPath,
     limits: { fileSize: 300 * 1024 * 1024 } //300MB
 });
 const minioClient = new minio_1.Client({
@@ -70,40 +72,50 @@ const minioClient = new minio_1.Client({
 });
 const bucketName = process.env.MINIO_BUCKET_NAME || "";
 router.post('/upload', upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const resp = {
+        videoUrl: '',
+        imgUrls: []
+    };
     const file = req.file;
     console.log(file, 'upload');
     if (!file) {
         res.send(resp_1.default.fail('No file uploaded'));
         return;
     }
-    fs.readFile(file.path, (err, data) => {
-        if (err) {
-            res.send(resp_1.default.fail('Failed to read file'));
-            return;
+    fs.readFileSync(file.path);
+    const filePath = path.join(`${uploadPath}`, `${file.filename}.${file.originalname.split(".")[1]}`);
+    const dir = path.dirname(filePath);
+    fs.mkdirSync(dir, { recursive: true });
+    console.log('上传文件的地址:', filePath);
+    const minioResp = yield minioClient.fPutObject(bucketName, `${file.filename}.${file.originalname.split(".")[1]}`, file.path);
+    console.log('minioResp', minioResp);
+    resp.videoUrl = `${process.env.MINIO_URL_PREFIX}/${bucketName}/${file.filename}.${file.originalname.split(".")[1]}`;
+    res.send(resp_1.default.ok(resp.videoUrl));
+    const imgChunkNum = 10;
+    FFmpegUtils_1.default.extractImagesFromVideo(file.path, imgChunkNum).then((result) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log(result);
+        for (const [index, imgPath] of result.entries()) {
+            const imgSuffix = path.extname(imgPath).replace(".", "");
+            const imgUrl = yield FileUploadUtils_1.default.uploadImg(imgPath, file.filename + "_" + index, imgSuffix);
+            resp.imgUrls.push(imgUrl);
         }
-        const filePath = path.join(`${uploadPath}`, `${file.filename}.${file.originalname.split(".")[1]}`);
-        const dir = path.dirname(filePath);
-        // 检查并创建目录
-        fs.mkdir(dir, { recursive: true }, (err) => __awaiter(void 0, void 0, void 0, function* () {
+    })).finally(() => {
+        fs.rm(file.path, { recursive: true, force: true }, (err) => {
             if (err) {
-                res.send(resp_1.default.fail('Failed to create directory'));
-                return;
+                console.error('删除文件夹时出错:', err);
             }
-            console.log('上传文件的地址:', filePath);
-            const minioResp = yield minioClient.fPutObject(bucketName, `${file.filename}.${file.originalname.split(".")[1]}`, file.path);
-            console.log('minioResp', minioResp);
-            const videoUrl = `${process.env.MINIO_URL_PREFIX}/${bucketName}/${file.filename}.${file.originalname.split(".")[1]}`;
-            // 删除临时文件
-            fs.unlink(`${uploadDesc}${file.filename}`, (err) => {
-                if (err) {
-                    console.error('Failed to delete temporary file', err);
-                }
-                else {
-                    console.log('Temporary file deleted');
-                }
-            });
-            res.send(resp_1.default.ok(videoUrl));
-        }));
+            else {
+                console.log('删除临时文件夹');
+            }
+        });
+        fs.rm(path.join(path.dirname(file.path), FFmpegUtils_1.default.imgChunkFilePath), { recursive: true, force: true }, (err) => {
+            if (err) {
+                console.error('删除文件夹时出错:', err);
+            }
+            else {
+                console.log('删除临时文件夹');
+            }
+        });
     });
 }));
 exports.default = router;

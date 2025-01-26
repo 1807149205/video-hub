@@ -84,7 +84,7 @@ onMounted(async () => {
     <van-cell-group inset>
       <van-cell v-if="userStore.isLogin" title="上传视频" value="" is-link @click="router.push('/videoUpload')" icon="guide-o"/>
         <van-cell v-if="userStore.isLogin" title="我的上传" value="" is-link @click="router.push('/myUploadVideo')" icon="video-o" />
-        <van-cell v-if="userStore.isLogin" title="标签管理" value="" is-link @click="router.push('/tagEdit')" icon="video-o" />
+        <van-cell v-if="userStore.isLogin" title="标签管理" value="" is-link @click="router.push('/tagEdit')" icon="bookmark-o" />
         <van-cell title="设置服务器" is-link @click="changeBaseUrlActionSheetShow = true" icon="hotel-o"/>
         <van-cell v-if="userStore.isLogin" title="登出" is-link @click="logout" icon="down"/>
     </van-cell-group>

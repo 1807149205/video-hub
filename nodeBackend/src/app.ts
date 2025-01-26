@@ -10,6 +10,7 @@ import videoRoutes from "./routes/videoRoutes";
 dotenv.config();
 
 const uploadPath = process.env.VIDEO_SAVE_PATH || "";
+const env = process.env.NODE_ENV || 'development';
 
 const app = express();
 const PORT = 8211;
@@ -41,5 +42,5 @@ app.use('/video', videoRoutes);
 
 // 启动服务器
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}\nenv: ${env}`);
 });

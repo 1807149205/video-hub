@@ -12,8 +12,10 @@ const videoSaveForm = reactive({
 })
 const videoUploaded = ref(false);
 const tags = ref([]);
+const uploadLoading = ref(false);
 
 const afterRead = async (file) => {
+  uploadLoading.value = true;
   // 此时可以自行将文件上传至服务器
   console.log(file);
   const formData = new FormData();
@@ -36,6 +38,8 @@ const afterRead = async (file) => {
     showNotify({
       message: '上传失败'
     })
+  } finally {
+    uploadLoading.value = false;
   }
 
 };
@@ -91,7 +95,7 @@ onMounted(async () => {
     </template>
     <template v-else>
       <van-uploader accept="video/*" :after-read="afterRead" style="margin-top: 10px;margin-left: 1rem">
-        <van-button icon="plus" type="primary">上传文件</van-button>
+        <van-button :loading="uploadLoading" icon="plus" type="primary">上传文件</van-button>
       </van-uploader>
     </template>
   </div>

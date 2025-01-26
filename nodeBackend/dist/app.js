@@ -46,6 +46,7 @@ const dotenv = __importStar(require("dotenv"));
 const videoRoutes_1 = __importDefault(require("./routes/videoRoutes"));
 dotenv.config();
 const uploadPath = process.env.VIDEO_SAVE_PATH || "";
+const env = process.env.NODE_ENV || 'development';
 const app = (0, express_1.default)();
 const PORT = 8211;
 // 解析 JSON 请求体
@@ -72,5 +73,5 @@ app.use('/videoTag', videoTagRoutes_1.default);
 app.use('/video', videoRoutes_1.default);
 // 启动服务器
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}\nenv: ${env}`);
 });

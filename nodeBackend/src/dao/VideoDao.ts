@@ -8,6 +8,7 @@ export interface VideoType {
     createUserId: number;
     createDate: Date;
     updateDate: Date;
+    imgUrl?: string;
 }
 
 export interface VideoRawType {
