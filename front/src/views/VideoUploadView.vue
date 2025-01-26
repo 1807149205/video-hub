@@ -15,6 +15,7 @@ const tags = ref([]);
 const uploadLoading = ref(false);
 
 const afterRead = async (file) => {
+  videoSaveForm.videoName = file.file.name.split('.')[0];
   uploadLoading.value = true;
   // 此时可以自行将文件上传至服务器
   console.log(file);

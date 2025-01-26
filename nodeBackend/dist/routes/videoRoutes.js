@@ -42,7 +42,7 @@ router.get('/homePage', (req, res) => __awaiter(void 0, void 0, void 0, function
     for (const video of videos) {
         const tag = yield videoTagDao.getByVideoId(video.id);
         const tagNames = tag.map(t => t.tagName);
-        video.imgUrl = video.videoUrl.replace(/(\.MP4)$/, '_0.png');
+        video.imgUrl = video.videoUrl.replace(/(\.mp4)$/, '_0.png');
         vos.push({
             video,
             tagNames
